@@ -49,7 +49,7 @@ python --version
 
 2. **Clone the repository:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Rohitkhot1718/cardiac_surgery_app
 cd cardiac_surgery_app
 ```
 

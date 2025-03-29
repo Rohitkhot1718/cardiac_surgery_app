@@ -1,0 +1,133 @@
+<!-- ✅ Add Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    /* Navbar is completely hidden by default */
+    .navbar-container {
+        position: fixed;
+        top: -90px; /* Hide it completely */
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        transition: top 0.3s ease-in-out;
+        z-index: 1000;
+    }
+
+    .navbar {
+        padding: 10px 20px;
+    }
+
+    /* Create a hover detection area at the very top */
+    .top-hover-area {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 30px;  /* Invisible small strip to detect hover */
+        width: 100%;
+        z-index: 999;
+    }
+
+    /* Prevent navbar from hiding on mobile */
+    /* @media (max-width: 768px) {
+        .navbar-container {
+            top: 0 !important;
+        }
+        .top-hover-area {
+            display: none;
+        }
+    } */
+</style>
+
+<!-- Invisible hover detection area -->
+<div class="top-hover-area"></div>
+
+<!-- ✅ Top Navbar (Hidden by default) -->
+<div class="navbar-container">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-heartbeat"></i> Cardiac App
+            </a>
+
+            <!-- ✅ Fixed Toggler Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            New Assessment
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == "doctor" %}
+                            <!-- Show Dashboard for Admin -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                    Doctor Panel
+                                </a>
+                            </li>
+                        {% else %}
+                            <!-- Show User Dashboard for Normal Users -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('user_dashboard') }}">
+                                    My Dashboard
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">
+                                Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('signin') }}">
+                                Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('signup') }}">
+                                Sign Up
+                            </a>
+                        </li>
+                    {% endif %}    
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const navbar = document.querySelector(".navbar-container");
+        const hoverArea = document.querySelector(".top-hover-area");
+        const toggler = document.querySelector(".navbar-toggler");
+
+        // ✅ Show navbar when cursor enters the top area (DESKTOP)
+        hoverArea.addEventListener("mouseenter", () => {
+            navbar.style.top = "0px"; // Slide down
+        });
+
+        // ✅ Hide navbar when mouse leaves (DESKTOP)
+        navbar.addEventListener("mouseleave", () => {
+            if (!document.querySelector(".navbar-collapse.show")) {
+                navbar.style.top = "-90px"; // Slide up only if menu is not open
+            }
+        });
+
+        // ✅ Prevent hiding when mobile menu is open
+        // toggler.addEventListener("click", () => {
+        //     if (navbar.style.top === "-90px") {
+        //         navbar.style.top = "0px";
+        //     }
+        // });
+    });
+</script>

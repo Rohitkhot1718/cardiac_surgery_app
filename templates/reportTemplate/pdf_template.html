@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Medical Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.5;
+            color: #000;
+            padding: 30px;
+        }
+
+        .letterhead {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .letterhead h1 {
+            font-size: 24px;
+            margin: 0 0 5px 0;
+        }
+
+
+        .report-info {
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .report-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .report-info span {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .section {
+            margin: 25px 0;
+        }
+
+        .section h2 {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #000;
+            font-size: 14px;
+        }
+
+        th {
+            font-weight: bold;
+            width: 40%;
+        }
+
+        .risk-assessment {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #000;
+        }
+
+        .risk-level , .risk-status{
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .risk-factors {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    
+    </style>
+</head>
+<body>
+    <div class="letterhead">
+        <h1>CARDIAC SURGERY ASSESSMENT REPORT</h1>
+    </div>
+
+    <div class="report-info">
+        <p>Date: <span id="reportDate"></span></p>
+        <p>Patient Name: <span id="pdf-name"></span></p>
+        <p>Patient ID: <span id="pdf-id"></span></p>
+    </div>
+
+    <div class="section">
+        <h2>PATIENT INFORMATION</h2>
+        <table>
+            <tr>
+                <th>Age</th>
+                <td id="pdf-age"></td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td id="pdf-gender"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>CLINICAL MEASUREMENTS</h2>
+        <table>
+            <tr>
+                <th>Diabetes Status</th>
+                <td id="pdf-diabetes"></td>
+            </tr>
+            <tr>
+                <th>Hypertension</th>
+                <td id="pdf-hypertension"></td>
+            </tr>
+            <tr>
+                <th>Ejection Fraction</th>
+                <td id="pdf-ejection"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>SURGICAL ASSESSMENT</h2>
+        <table>
+            <tr>
+                <th>CABG Indicated</th>
+                <td id="pdf-cabg"></td>
+            </tr>
+            <tr>
+                <th>Valve Surgery Indicated</th>
+                <td id="pdf-valve"></td>
+            </tr>
+            <tr>
+                <th>Congenital Surgery Indicated</th>
+                <td id="pdf-congenital"></td>
+            </tr>
+            <tr>
+                <th>Aneurysm Surgery Indicated</th>
+                <td id="pdf-aneurysm"></td>
+            </tr>
+            <tr>
+                <th>Transplant Surgery Indicated</th>
+                <td id="pdf-transplant"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>RISK ASSESSMENT</h2>
+        <div class="risk-assessment">
+            <div class="risk-level" id="pdf-risk-level"></div>
+            <div class="risk-status" id="pdf-risk-status"></div>
+            <p><strong>Risk Factors Identified:</strong></p>
+            <ul class="risk-factors" id="pdf-risk-factors"></ul>
+        </div>
+    </div>
+</body>
+</html>

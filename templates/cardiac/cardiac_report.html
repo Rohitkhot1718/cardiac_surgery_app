@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cardiac surgery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* overwrite style here */
+        /* Overwrite container styles for report page */
+        .container {
+            max-height: 90vh;  /* Set maximum height */
+            height: auto;
+            padding: 20px;
+            overflow-y: auto;  /* Enable vertical scrolling */
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: -moz-scrollbars-none;  /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Remove previous scrollbar styling */
+        .container::-webkit-scrollbar-track,
+        .container::-webkit-scrollbar-thumb,
+        .container::-webkit-scrollbar-thumb:hover {
+            display: none;
+        }
+
+        /* Compact table styles */
+        .table {
+            margin: 10px 0;
+            border: none;
+        }
+
+        .table th, .table td {
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table tr:last-child td,
+        .table tr:last-child th {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Make table more compact */
+        .table.w-50 {
+            width: 85% !important;
+            max-width: none;
+            margin-top: 20px;
+        }
+
+        /* Reduce spacing */
+        .mt-5 {
+            margin-top: 1rem !important;
+        }
+
+        .button {
+            margin: 15px 0;
+        }
+
+        /* Alert adjustments */
+        .alert {
+            padding: 8px 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Ensure content fits */
+        .full-body {
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .row.justify-content-center {
+            margin: 0;
+            width: 100%;
+        }
+
+        .table-section th {
+            background: rgba(42, 82, 152, 0.3);
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .btn-download {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="full-body">
+        <div class="container">
+            <div id="report-section" class="row justify-content-center" style="display: none;">
+                <h2 class="text-white text-center mb-4">Cardiac Surgery Risk Assessment Report</h2>
+
+                <!-- Patient Information Section -->
+                <table class="table w-50">
+                    <tr class="text-white table-section">
+                        <th coldiv="2">Patient Information</th>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Name</th>
+                        <td id="name"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Age</th>
+                        <td id="age"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Gender</th>
+                        <td id="gender"></td>
+                    </tr>
+                </table>
+
+                <!-- Medical Measurements Section -->
+                <table class="table w-50">
+                    <tr class="text-white table-section">
+                        <th coldiv="2">Medical Measurements</th>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Diabetes</th>
+                        <td id="diabetes"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Hypertension</th>
+                        <td id="hypertension"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Ejection Fraction</th>
+                        <td id="EjectionFraction"></td>
+                    </tr>
+                </table>
+
+                <!-- Surgery Types Section -->
+                <table class="table w-50">
+                    <tr class="text-white table-section">
+                        <th coldiv="2">Surgery Types</th>
+                    </tr>
+                    <tr class="text-white">
+                        <th>CABG</th>
+                        <td id="CABG"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Valve</th>
+                        <td id="valve"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Congenital</th>
+                        <td id="congenita"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Aneurysm</th>
+                        <td id="aneurysm"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Transplant</th>
+                        <td id="transplant"></td>
+                    </tr>
+                </table>
+
+                <!-- Risk Assessment Section Last -->
+                <table class="table w-50">
+                    <tr class="text-white table-section">
+                        <th coldiv="2">Risk Assessment</th>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Risk Level</th>
+                        <td id="riskLevel"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Risk Status</th>
+                        <td id="riskStatus"></td>
+                    </tr>
+                    <tr class="text-white">
+                        <th>Risk Factors</th>
+                        <td id="riskFactors"></td>
+                    </tr>
+                </table>
+
+                <!-- Action Buttons -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-download" onclick="generateReport()">
+                        <i class="fas fa-file-pdf me-2"></i>Generate PDF
+                    </button>
+                    <button type="button" class="btn" onclick="window.location.href='/cardiac'">
+                        <i class="fas fa-home me-2"></i>New Assessment
+                    </button>                    
+                </div>
+            </div>
+
+            <div id="no-data" class="alert alert-warning text-center" style="display: none;">
+                <div><strong>No Data Found.</strong></div>
+                <div>Please Fill Patient Details First.</div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('patient_id') 
+
+        // Fetch data from the backend endpoint
+        fetch(`/get_prediction_result?patient_id=${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.patient_data) {
+                const patientData = data.patient_data;
+
+                // Destructure the patient data for easier access
+                const {
+                    name, age, gender, diabetes, hypertension, kidney_disease,
+                    respiratory_issues, ejection_fraction, surgery_type, risk_level,
+                    risk_status, risk_factors
+                } = patientData;
+
+                // Set patient information into the page
+                $("#name").text(name);
+                $("#age").text(age);
+                $("#gender").text(gender);
+
+                // Set diabetes
+                let diabetesStatus = "Normal";
+                if (diabetes >= 99 && diabetes <= 125) {
+                    diabetesStatus = "Moderate";
+                } else if (diabetes > 125) {
+                    diabetesStatus = "High";
+                }
+                $("#diabetes").text(diabetesStatus);
+
+                // Set hypertension
+                let hypertensionStatus = "Normal";
+                if (hypertension >= 90 && hypertension <= 120) {
+                    hypertensionStatus = "Normal";
+                } else if (hypertension >= 120 && hypertension <= 129) {
+                    hypertensionStatus = "Moderate";
+                } else {
+                    hypertensionStatus = "High";
+                }
+                $("#hypertension").text(hypertensionStatus);
+
+                // Set Kidney Disease
+                let kidneyDiseaseStatus = "Normal";
+                if (kidney_disease >= 90 && kidney_disease <= 100) {
+                    kidneyDiseaseStatus = "Normal";
+                } else if (kidney_disease >= 50 && kidney_disease <= 89) {
+                    kidneyDiseaseStatus = "Moderate";
+                } else {
+                    kidneyDiseaseStatus = "High";
+                }
+                $("#KidneyDisease").text(kidneyDiseaseStatus);
+
+                // Set Respiratory Issues
+                let respiratoryIssuesStatus = "Normal";
+                if (respiratory_issues >= 80 && respiratory_issues <= 100) {
+                    respiratoryIssuesStatus = "Normal";
+                } else if (respiratory_issues >= 50 && respiratory_issues <= 79) {
+                    respiratoryIssuesStatus = "Moderate";
+                } else {
+                    respiratoryIssuesStatus = "High";
+                }
+                $("#RespiratoryIssues").text(respiratoryIssuesStatus);
+
+                // Set Ejection Fraction
+                let ejectionFractionStatus = "Normal";
+                if (ejection_fraction >= 50 && ejection_fraction <= 70) {
+                    ejectionFractionStatus = "Normal";
+                } else if (ejection_fraction >= 40 && ejection_fraction <= 49) {
+                    ejectionFractionStatus = "Moderate";
+                } else {
+                    ejectionFractionStatus = "High";
+                }
+                $("#EjectionFraction").text(ejectionFractionStatus);
+
+                // Set Surgery Types
+                $("#CABG").text(surgery_type.includes("CABG") ? "Yes" : "No");
+                $("#valve").text(surgery_type.includes("Valve") ? "Yes" : "No");
+                $("#congenita").text(surgery_type.includes("Congenita") ? "Yes" : "No");
+                $("#aneurysm").text(surgery_type.includes("Aneurysm") ? "Yes" : "No");
+                $("#transplant").text(surgery_type.includes("Transplant") ? "Yes" : "No");
+
+                // Show report section and hide the 'No Data' alert
+                $("#report-section").show();
+                $("#no-data").hide();
+
+                // Check prediction result if available
+       
+                 // Set prediction risk data
+                    $("#riskLevel").text(risk_level + "%");
+                    $("#riskStatus").text(risk_status);
+
+                    // Format risk factors as a bullet list (example, adjust if needed)
+                    // const formattedFactors = "• Risk factors: Diabetes, Hypertension, Kidney Disease";  // Example, add logic to pull these dynamically
+                    const riskFactorsArray = Array.isArray(risk_factors)
+                    ? risk_factors
+                    : (typeof risk_factors === "string" ? risk_factors.split(", ") : []);
+                    
+                    const formattedFactors = riskFactorsArray
+                    .map(factor => `• ${factor}`)
+                    .join('<br>');
+                    $("#riskFactors").html(formattedFactors);
+            } else {
+                console.log("No patient data found.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching patient data:', error);
+            // Handle the case where fetching data fails
+            $("#report-section").hide();
+            $("#no-data").show();
+        });
+    // Add this function for PDF generation
+    function generateReport() {
+        // Load PDF template
+        fetch('/templates/reportTemplate/pdf_template.html')
+            .then(response => response.text())
+            .then(template => {
+                // Create temporary container
+                
+                const container = document.createElement('div');
+                container.innerHTML = template;
+                document.body.appendChild(container);
+                
+
+                // Fill template with data
+                container.querySelector('#reportDate').textContent = new Date().toLocaleString();
+                container.querySelector('#pdf-name').textContent = $("#name").text().toLocaleUpperCase();
+                container.querySelector('#pdf-id').textContent = generatePatientId();
+                container.querySelector('#pdf-age').textContent = $("#age").text();
+                container.querySelector('#pdf-gender').textContent = $("#gender").text();
+                container.querySelector('#pdf-diabetes').textContent = $("#diabetes").text();
+                container.querySelector('#pdf-hypertension').textContent = $("#hypertension").text();
+                container.querySelector('#pdf-ejection').textContent = $("#EjectionFraction").text();
+                container.querySelector('#pdf-cabg').textContent = $("#CABG").text();
+                container.querySelector('#pdf-valve').textContent = $("#valve").text();
+                container.querySelector('#pdf-congenital').textContent = $("#congenita").text();
+                container.querySelector('#pdf-aneurysm').textContent = $("#aneurysm").text();
+                container.querySelector('#pdf-transplant').textContent = $("#transplant").text();
+                container.querySelector('#pdf-risk-level').textContent = `Risk Level: ${$("#riskLevel").text()}`;
+                container.querySelector('#pdf-risk-status').textContent = `Risk Status: ${$("#riskStatus").text()}`;
+                container.querySelector('#pdf-risk-factors').innerHTML = $("#riskFactors").html();
+
+                // Configure PDF options
+                const opt = {
+                    margin: [0.5, 0.5],
+                    filename: 'cardiac_surgery_report.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2,
+                        backgroundColor: '#ffffff',
+                        logging: true,
+                        letterRendering: true,
+                        useCORS: true
+                    },
+                    jsPDF: { 
+                        unit: 'in', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                        compress: true
+                    }
+                };
+
+                // Generate PDF
+                html2pdf()
+                    .set(opt)
+                    .from(container)
+                    .save()
+                    .then(() => {
+                        document.body.removeChild(container);
+                    })
+                    .catch(error => console.error('PDF Generation Error:', error));
+            })
+            .catch(error => console.error('Template Loading Error:', error));
+          }
+
+          $(document).ready(function() {
+            if (patientId?.length > 0) {
+                // ✅ Data exists → Show report, hide "No Data" message
+                $("#report-section").show();
+                $("#no-data").hide();
+                document.querySelector('.container').style.display = 'block'
+            } else {
+                // ❌ No data → Hide report, show "No Data" message
+                $("#report-section").hide();
+                $("#no-data").show();
+                document.querySelector('.container').style.display = 'flex'
+            }
+
+    });
+
+    function generatePatientId() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const uniqueNum = Math.floor(Math.random() * 9000) + 1000; // 4-digit random number
+        return `CARD-${year}${month}-${uniqueNum}`;
+    }
+
+</script>

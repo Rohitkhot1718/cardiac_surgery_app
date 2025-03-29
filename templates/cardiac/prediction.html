@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Assessment Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .result-container {
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            color: white;
+        }
+
+        .header {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        #res {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 12px;
+            display: block;
+            min-width: 150px;
+            background: rgba(42, 82, 152, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .status-label {
+            font-size: 18px;
+            margin: 15px 0;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .risk-factors {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .risk-factors h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .risk-factors ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .risk-factors li {
+            font-size: 14px;
+            margin: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .risk-factors li:before {
+            font-family: "Font Awesome 6 Free";
+            content: "\f0da";  
+            font-weight: 900;
+            position: absolute;
+            left: 8px;
+            font-size: 14px;
+        }
+
+        .alert {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(42, 82, 152, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button {
+            margin-top: 25px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .status-text {
+            font-size: 24px;
+            color: white;
+            margin: 15px 0;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .status-low {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-moderate {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-high {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="full-body">
+        <div class="container">
+            <div class="result-container" style="display: none;">
+                <h1 class="header">Risk Assessment Result</h1>
+                <div class="status-label">Risk Level</div>
+                <div id="res"></div>
+                <div id="status" class="status-text"></div>
+                <div class="risk-factors">
+                    <h3>Risk Factors</h3>
+                    <ul id="riskFactorsList"></ul>
+                </div>
+                <div class="alert" id="messageBox1" role="alert"></div>
+                <div class="button">
+                    <button class="btn" onclick="window.location.href='/cardiac_report/'">Generate Report</button>
+                </div>
+            </div>
+
+            <div id="no-data" class="alert alert-warning text-center" style="display: none;">
+                <div><strong>No Data Found.</strong></div>
+                <div>Please Fill Patient Details First.</div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    let id = ''
+    function startPredicting() {
+        
+        try {
+             // Retrieve patient_id from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientId = urlParams.get('patient_id');
+            patientId ? id = patientId : ''
+            if (!patientId) {
+                showError("No patient ID found");
+                return;
+            }
+            
+            // Show loading state
+            // showLoading();
+            
+            fetch(`/get_prediction_result?patient_id=${patientId}`)
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server error occurred');
+                }
+                return data;
+            })
+            .then(data => {
+                if (data.status === 'error') {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+                
+                const severity = parseFloat(data.patient_data.risk_level);
+                
+                $("#res").text(Math.round(severity) + "%")
+                         .removeClass('error');
+                
+                // Get risk assessment data
+                const riskData = getRiskAssessment(severity);
+                updateUI(riskData);
+                
+                // Store prediction result for report
+                // localStorage.setItem("predictionResult", JSON.stringify({
+                //     severity: Math.round(severity),
+                //     status: riskData.status,
+                //     risk_factors: riskData.factors
+                // }));
+
+                // Update Generate Report button
+                $(".btn").removeClass('disabled')
+                    .attr('onclick', `window.location.href='/cardiac_report/?patient_id=${id}'`);
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError(error.message);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            showError("Invalid form data");
+        }
+    }
+
+    function getRiskAssessment(severity) {
+        if (severity < 30) {
+            return {
+                status: "Low Risk",
+                statusClass: "status-low",
+                message: "Regular follow-up recommended",
+                factors: ["Normal vital signs", "Good ejection fraction", "No major complications"]
+            };
+        } else if (severity >= 30 && severity <= 60) {
+            return {
+                status: "Moderate Risk",
+                statusClass: "status-moderate",
+                message: "Medical consultation recommended",
+                factors: ["Elevated blood pressure", "Reduced ejection fraction", "Pre-existing conditions"]
+            };
+        } else {
+            return {
+                status: "High Risk",
+                statusClass: "status-high",
+                message: "Immediate medical attention required",
+                factors: ["Multiple risk factors", "Low ejection fraction", "Complex surgery type", "Age consideration"]
+            };
+        }
+    }
+
+    function updateUI(riskData) {
+        const { status, statusClass, message, factors } = riskData;
+        
+        // Update status
+        $("#status")
+            .text(status)
+            .removeClass("status-low status-moderate status-high")
+            .addClass(`status-text ${statusClass}`);
+        
+        // Update message
+        $("#messageBox1").html(message);
+        
+        // Update risk factors list
+        $("#riskFactorsList").html(
+            factors.map(factor => `<li>${factor}</li>`).join('')
+        );
+    }
+
+    function showError(message) {
+        $("#res").text("Error")
+                .removeClass()
+                .addClass('error');
+        $("#messageBox1")
+            .html(`<strong>Error:</strong><br>${message}`)
+            .removeClass()
+            .addClass("alert alert-danger");
+    }
+
+    function showLoading() {
+        $("#res").text("...")
+                .addClass('loading');
+        $("#messageBox1")
+            .html("Calculating risk assessment...")
+            .removeClass()
+            .addClass("alert loading");
+    }
+
+    $(document).ready(function() {
+        if (id.length > 0) {
+            // ✅ Data exists → Show report, hide "No Data" message
+            $(".result-container").show();
+            $("#no-data").hide();
+        } else {
+            // ❌ No data → Hide report, show "No Data" message
+            $(".result-container").hide();
+            $("#no-data").show();
+            document.querySelector('.container').style.display = 'flex';
+        }
+    });
+
+
+    // Start prediction when page loads
+    startPredicting();
+</script>

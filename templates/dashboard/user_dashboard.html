@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+</head>
+
+<body>
+    
+    {% include 'navbar.html' %}
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-navbar">
+                <h1>User Dashboard</h1>
+                <div class="user-info">
+                    <span class="user-name">{{ current_user.username.upper() }}</span>
+                    <img src="{{ url_for('static', filename='image/patient.jpg') }}" alt="User" class="user-avatar">
+                </div>
+            </header>
+
+            <!-- Reports Section -->
+            <section class="report-list">
+                <h2 class="text-white">My Previous Reports</h2>
+                {% if reports %}
+                <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Risk Level</th>
+                            <th>Risk Status</th>
+                            <th>Date</th>
+                            <th>View Report</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>{{report.name}}</td>
+                            <td>{{report.age}}</td>
+                            <td>{{report.risk_level}}%</td>
+                            <td class="{% if report.risk_status == 'High' %} high-risk
+                                       {% elif report.risk_status == 'Moderate' %} moderate-risk
+                                       {% else %} low-risk {% endif %}">
+                                {{ report.risk_status }}
+                            </td>
+                            <td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <a href="{{ url_for('view_report', patient_id=report.id) }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center">
+                    <strong>No reports found.</strong> Generate a new assessment.
+                </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>
